@@ -23,7 +23,7 @@ test:
 # Store production database in the storage/ directory, which by default
 # is mounted as a persistent Docker volume in config/deploy.yml.
 production:
-  url: <%= ENV['DATABASE_URL'] %>
+  url: <%= ENV['postgresql://postgres:dLpwoLHCThuYIYyuXxaYrbKjwVoJoAoa@postgres.railway.internal:5432/railway'] %>
   primary:
     <<: *default
     database: storage/production.sqlite3
