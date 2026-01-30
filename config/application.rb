@@ -23,12 +23,23 @@ module JiraCloneApi
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
-
+ config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins 'https://jira-clone-frontend-self.vercel.app'
+        resource '*',
+          headers: :any,
+          methods: [:get, :post, :put, :patch, :delete, :options, :head],
+          credentials: true,
+          max_age: 600 # Cache preflight response for 10 minutes
+      end
+    end
+    config.middleware.insert_before Rack::Cors, CorsFix
     # Only loads a smaller set of middleware suitable for API only apps.
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only =  true
     config.middleware.use ActionDispatch::Cookies
-    config.middleware.use ActionDispatch::Session::CookieStore, key: "_jira_clone_api_session"
+    config.middleware.use ActionDispatch::Session::CookieStore, key: "_jira_clone_api_session", same_site: :none,
+      secure: true
   end
 end

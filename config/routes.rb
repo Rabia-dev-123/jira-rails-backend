@@ -17,6 +17,7 @@ Rails.application.routes.draw do
            member do
     patch :move
   end
+  match '*path', to: ->(env) { [204, {}, []] }, via: :options
         end
       end
     end
