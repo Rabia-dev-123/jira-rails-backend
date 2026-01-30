@@ -64,7 +64,7 @@ config.session_store :cookie_store,
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: "example.com" }
 # Allow Railway domain
-config.hosts << ".onrender.com"
+config.hosts << ".up.railway.app"
 
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
