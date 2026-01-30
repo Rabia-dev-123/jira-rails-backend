@@ -1,5 +1,14 @@
 
 Rails.application.routes.draw do
+
+    # Add a root route for the main domain
+  root to: proc { [200, {}, ["Rails API is running! Go to /api/v1/boards"]] }
+  
+  # Or create a simple home controller
+  # root "home#index"
+  
+  # Add a health check for Railway/monitoring
+  get "/health", to: proc { [200, {}, ["OK"]] }
   namespace :api do
     namespace :v1 do
       post "/signup", to: "users#create"
