@@ -23,9 +23,16 @@ Rails.application.configure do
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   # config.assume_ssl = true
+# Add this anywhere in the config block (e.g., after line 50):
+config.session_store :cookie_store,
+  key: "_jira_clone_session",
+  same_site: :none,   # Allows sending cookies to different domains
+  secure: true,       # Requires HTTPS (works with force_ssl: true)
+  domain: :all        # Or use your specific backend domain like '.onrender.com'
+
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
+  config.force_ssl = true
 
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
@@ -57,7 +64,7 @@ Rails.application.configure do
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: "example.com" }
 # Allow Railway domain
-config.hosts << "jira-rails-backend.up.railway.app"
+config.hosts << ".onrender.com"
 
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
