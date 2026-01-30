@@ -19,16 +19,22 @@ test:
   host: localhost
   port: 5432
 
+# PRODUCTION CONFIGURATION (Railway)
 production:
-  <<: *default
-  url: <%= ENV['DATABASE_URL'] %>
-  
-  cable:
-  <<: *default
-  url: <%= ENV['DATABASE_URL'] %>
-  migrations_paths: db/cable_migrate
+  primary:
+    <<: *default
+    url: <%= ENV['DATABASE_URL'] %>
+    
+  cache:
+    <<: *default
+    url: <%= ENV['DATABASE_URL'] %>
+    
+  queue:
+    <<: *default
+    url: <%= ENV['DATABASE_URL'] %>
+    migrations_paths: db/queue_migrate
 
-queue:
-  <<: *default
-  url: <%= ENV['DATABASE_URL'] %>
-  migrations_paths: db/queue_migrate
+  cable:
+    <<: *default
+    url: <%= ENV['DATABASE_URL'] %>
+    migrations_paths: db/cable_migrate
