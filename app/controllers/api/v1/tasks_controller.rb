@@ -48,11 +48,10 @@ end
 def move
   task = Task.find_by(id: params[:id])
   
-  unless task
-    render json: { error: "Task not found" }, status: :not_found
-    return
-  end
-  
+  unless current_user.boards.exists?(id: task.board_id)
+      render json: { error: "Unauthorized" }, status: :unauthorized
+      return
+    end
   new_column = Column.find_by(id: params[:column_id])
   
   unless new_column
@@ -66,7 +65,7 @@ def move
   else
     render json: { errors: task.errors.full_messages }, status: :unprocessable_entity
   end
-end
+ end
 
       private
 
@@ -84,6 +83,4 @@ end
 def task_params
   params.require(:task).permit(:title, :description, :user_id, :column_id)
 end
-  def current_user
-    User.first end
 end
