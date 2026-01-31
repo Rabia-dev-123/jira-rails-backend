@@ -47,7 +47,17 @@ end
       end
 def move
   task = Task.find(params[:id])
-  if task.update(column_id: params[:column_id])
+  
+  # Get the new column to find its board_id
+  new_column = Column.find_by(id: params[:column_id])
+  
+  unless new_column
+    render json: { error: "Column not found" }, status: :not_found
+    return
+  end
+  
+  # Update BOTH column_id AND board_id
+  if task.update(column_id: params[:column_id], board_id: new_column.board_id)
     render json: task
   else
     render json: { errors: task.errors.full_messages }, status: :unprocessable_entity
