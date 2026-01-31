@@ -66,7 +66,7 @@ def move
   else
     render json: { errors: task.errors.full_messages }, status: :unprocessable_entity
   end
- end
+end
 
       private
 
@@ -84,4 +84,6 @@ def move
 def task_params
   params.require(:task).permit(:title, :description, :user_id, :column_id)
 end
+  def current_user
+    User.first end
 end
