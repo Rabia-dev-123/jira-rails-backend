@@ -49,13 +49,14 @@ def move
   Rails.logger.info "MOVE ACTION CALLED: task_id=#{params[:id]}, column_id=#{params[:column_id]}"
   
   begin
+    # Find task directly, not scoped to current column
     task = Task.find(params[:id])
     Rails.logger.info "Task found: #{task.inspect}"
     
     new_column = Column.find(params[:column_id])
     Rails.logger.info "New column found: #{new_column.inspect}"
     
-    # Only update column_id - board association is automatic through column
+    # Only update column_id
     if task.update(column_id: new_column.id)
       Rails.logger.info "Task updated successfully"
       
