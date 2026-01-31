@@ -46,25 +46,26 @@ end
         render json: { message: "Task deleted successfully" }
       end
 def move
-  task = Task.find_by(id: params[:id])
+  Rails.logger.info "MOVE ACTION CALLED: task_id=#{params[:id]}, column_id=#{params[:column_id]}"
   
-  unless current_user.boards.exists?(id: task.board_id)
-      render json: { error: "Unauthorized" }, status: :unauthorized
-      return
+  begin
+    task = Task.find(params[:id])
+    Rails.logger.info "Task found: #{task.inspect}"
+    
+    new_column = Column.find(params[:column_id])
+    Rails.logger.info "New column found: #{new_column.inspect}"
+    
+    # Simple update without permission checks
+    if task.update(column_id: new_column.id, board_id: new_column.board_id)
+      Rails.logger.info "Task updated successfully"
+      render json: task.as_json(include: { user: { only: [:id, :name] } })
+    else
+      Rails.logger.error "Task update failed: #{task.errors.full_messages}"
+      render json: { errors: task.errors.full_messages }, status: :unprocessable_entity
     end
-  
-  new_column = Column.find_by(id: params[:column_id])
-  
-  unless new_column
-    render json: { error: "Column not found" }, status: :not_found
-    return
-  end
-  
-  # Update BOTH column_id AND board_id
-  if task.update(column_id: new_column.id, board_id: new_column.board_id)
-    render json: task.as_json(include: { user: { only: [:id, :name] } })
-  else
-    render json: { errors: task.errors.full_messages }, status: :unprocessable_entity
+  rescue => e
+    Rails.logger.error "ERROR in move action: #{e.message}\n#{e.backtrace.join("\n")}"
+    render json: { error: "Internal server error: #{e.message}" }, status: :internal_server_error
   end
 end
 
