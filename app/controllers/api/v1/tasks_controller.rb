@@ -46,9 +46,13 @@ end
         render json: { message: "Task deleted successfully" }
       end
 def move
-  task = Task.find(params[:id])
+  task = Task.find_by(id: params[:id])
   
-  # Get the new column to find its board_id
+  unless task
+    render json: { error: "Task not found" }, status: :not_found
+    return
+  end
+  
   new_column = Column.find_by(id: params[:column_id])
   
   unless new_column
@@ -57,8 +61,8 @@ def move
   end
   
   # Update BOTH column_id AND board_id
-  if task.update(column_id: params[:column_id], board_id: new_column.board_id)
-    render json: task
+  if task.update(column_id: new_column.id, board_id: new_column.board_id)
+    render json: task.as_json(include: { user: { only: [:id, :name] } })
   else
     render json: { errors: task.errors.full_messages }, status: :unprocessable_entity
   end
