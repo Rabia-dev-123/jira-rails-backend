@@ -18,14 +18,13 @@ Rails.application.routes.draw do
       get "/users", to: "users#index"
        patch "/users/:id", to: "users#update"  # Add this for role updates
     delete "/users/:id", to: "users#destroy" # Add this for deleting users
-      patch "/tasks/:id/move", to: "api/v1/tasks#move"
       resources :admin, only: [ :index ]
       resources :boards  do
         resources :columns, only: [:index, :show, :create, :update, :destroy] do
           resources :tasks
            member do
-    patch :move
-  end
+             patch :move
+          end
         end
       end
     end
