@@ -58,6 +58,8 @@ def move
     # Only update column_id - board association is automatic through column
     if task.update(column_id: new_column.id)
       Rails.logger.info "Task updated successfully"
+      
+      # Return the task WITH user data included
       render json: task.as_json(include: { user: { only: [:id, :name] } })
     else
       Rails.logger.error "Task update failed: #{task.errors.full_messages}"
