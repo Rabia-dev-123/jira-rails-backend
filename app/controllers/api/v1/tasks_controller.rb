@@ -55,8 +55,8 @@ def move
     new_column = Column.find(params[:column_id])
     Rails.logger.info "New column found: #{new_column.inspect}"
     
-    # Simple update without permission checks
-    if task.update(column_id: new_column.id, board_id: new_column.board_id)
+    # Only update column_id - board association is automatic through column
+    if task.update(column_id: new_column.id)
       Rails.logger.info "Task updated successfully"
       render json: task.as_json(include: { user: { only: [:id, :name] } })
     else
@@ -68,7 +68,6 @@ def move
     render json: { error: "Internal server error: #{e.message}" }, status: :internal_server_error
   end
 end
-
       private
 
       def set_board
