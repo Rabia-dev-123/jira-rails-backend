@@ -48,10 +48,10 @@ end
 def move
   task = Task.find_by(id: params[:id])
   
-  unless task
-    render json: { error: "Task not found" }, status: :not_found
-    return
-  end
+  unless current_user.boards.exists?(id: task.board_id)
+      render json: { error: "Unauthorized" }, status: :unauthorized
+      return
+    end
   
   new_column = Column.find_by(id: params[:column_id])
   
