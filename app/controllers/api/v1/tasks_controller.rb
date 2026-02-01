@@ -29,16 +29,15 @@ class Api::V1::TasksController < ApplicationController
 
       # PATCH /boards/:board_id/columns/:column_id/tasks/:id
 def update
-  task = @column.tasks.find(params[:id])
-  
-  # Try to update, but don't fail on validation
-  if task.update(task_params)
-    render json: task
-  else
-    # Log the errors for debugging
+  # FIX: Find task by ID only, not scoped to current column
+  task = Task.find(params[:id])
+     if task.update(task_params)
+    # Return complete task with user data for frontend
+    render json: task.as_json(include: { user: { only: [:id, :name] } })
+     else
     Rails.logger.error "Task update failed: #{task.errors.full_messages}"
     render json: { errors: task.errors.full_messages }, status: :unprocessable_entity
-  end
+     end
 end
    # DELETE /boards/:board_id/columns/:column_id/tasks/:id
       def destroy
@@ -81,9 +80,10 @@ end
         @column = @board.columns.find(params[:column_id])
       end
 
-      def set_task
-        @task = @column.tasks.find(params[:id])
-      end
+     def set_task
+  # FIX: Find task by ID only, not scoped to current column
+  @task = Task.find(params[:id])
+end
 def task_params
   params.require(:task).permit(:title, :description, :user_id, :column_id)
 end
